@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import { connectToServer } from './src/config/database.js';
-import authRoutes from './src/api/auth.routes.js'
+import authRoutes from './src/api/auth.routes.js';
+import userRoutes from './src/api/user.routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 const startServer = async () => {
     try {
