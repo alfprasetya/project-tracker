@@ -1,5 +1,6 @@
+import jwt from 'jsonwebtoken';
 import { createUser, findUserByEmail } from "../dal/user.dal.js";
-import { hashPassword } from "../utils/password.util.js";
+import { comparePassword, hashPassword } from "../utils/password.util.js";
 
 export const registerUserService = async (userData) => {
     const { username, email, password } = userData;
@@ -23,4 +24,33 @@ export const registerUserService = async (userData) => {
     return {
         username, email
     };
-}
+};
+
+export const loginUserService = async (loginData) => {
+    const { email, password } = loginData;
+
+    const user = await findUserByEmail(email);
+    if (!user) {
+        throw new Error('Invalid credentials.')
+    }
+
+    const isPasswordMatch = await comparePassword(password, user.password);
+    if (!isPasswordMatch) {
+        throw new Error('Invalid credentials.');
+    }
+
+    const tokenPayload = {
+        userId: user._id,
+        email: user.email
+    };
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+
+    return {
+        user: {
+            username: user.username,
+            email: user.email
+        },
+        token,
+    };
+};

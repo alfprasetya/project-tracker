@@ -22,7 +22,7 @@ export const connectToServer = async () => {
 
 export const getDb = () => {
     if (!db) {
-        throw new Error('Database not initialized. Call connectToDb first.');
+        throw new Error('Database not initialized. Call connectToServer first.');
     }
 
     return db;
